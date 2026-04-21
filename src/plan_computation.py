@@ -23,7 +23,7 @@ def compute_distance_between_images(
     """
 
     footprint_x, footprint_y = compute_image_footprint_on_surface(camera, dataset_spec.height)
-    distance_x = footprint_x *(1 - dataset_spec.ovrelap)
+    distance_x = footprint_x * (1 - dataset_spec.overlap)
     distance_y = footprint_y * (1 - dataset_spec.sidelap)
 
     return distance_x, distance_y
@@ -62,4 +62,22 @@ def generate_photo_plan_on_grid(
         Scan plan as a list of waypoints.
 
     """
-    raise NotImplementedError()
+    distance_x, distance_y = compute_distance_between_images(camera, dataset_spec)
+    speed = compute_speed_during_photo_capture(camera, dataset_spec)
+
+    n_x = math.floor(dataset_spec.scan_dimension_x / distance_x) + 1
+    n_y = math.floor(dataset_spec.scan_dimension_y / distance_y) + 1
+
+    start_x = (dataset_spec.scan_dimension_x - (n_x - 1) * distance_x) / 2
+    start_y = (dataset_spec.scan_dimension_y - (n_y - 1) * distance_y) / 2
+
+    waypoints = []
+    for row in range(n_y):
+        y = start_y + row * distance_y
+        cols = range(n_x) if row % 2 == 0 else range(n_x - 1, -1, -1)
+        for col in cols:
+            x = start_x + col * distance_x
+            waypoints.append(Waypoint(x=x, y=y, z=dataset_spec.height, speed=speed))
+
+    return waypoints
+
