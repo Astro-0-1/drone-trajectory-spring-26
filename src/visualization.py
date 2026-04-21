@@ -17,4 +17,23 @@ def plot_photo_plan(photo_plans: T.List[Waypoint]) -> go.Figure:
     Returns:
         Plotly figure object.
     """
-    raise NotImplementedError()
+    xs = [wp.x for wp in photo_plans]
+    ys = [wp.y for wp in photo_plans]
+
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(
+        x=xs, y=ys,
+        mode="lines+markers",
+        name = "Waypoints",
+        marker = dict(size = 6),
+    ))
+
+    fig.update_layout(
+        title="Drone Photo Plan",
+        xaxis_title="X (m)",
+        yaxis_title="Y (m)",
+        yaxis_scaleanchor="x",
+    )
+
+    return fig

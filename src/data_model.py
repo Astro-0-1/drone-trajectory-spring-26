@@ -31,8 +31,13 @@ class Camera:
     num_pixels_y: int
 
 
+@dataclass
 class Waypoint:
     """
     Waypoints are positions where the drone should fly to and capture a photo.
     """
-    pass
+    x: float
+    y: float
+    z: float
+    speed: float
+    
